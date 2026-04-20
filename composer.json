@@ -16,8 +16,7 @@
     }
   ],
   "require": {
-    "wanphp/core": "v2.0.0-alpha1",
-    "zircote/swagger-php": "^6.1.1"
+    "wanphp/core": "^v2.0.0"
   },
   "autoload": {
     "psr-4": {
