@@ -1,53 +1,126 @@
 <?php
 
-namespace Wanphp\Plugins\Weixin\Entities;
+namespace WanPHP\Plugins\WeiXin\Entities;
 
 
-use JsonSerializable;
-use Wanphp\Libray\Mysql\EntityTrait;
+use Doctrine\DBAL\Types\Types;
+use OpenApi\Attributes as OA;
+use WanPHP\Core\Attribute\Column;
+use WanPHP\Core\Attribute\DataTable;
+use WanPHP\Core\Traits\EntityArrayTrait;
 
-/**
- * Class AutoReplyEntity
- * @package Wanphp\Plugins\Weixin\Entities
- * @OA\Schema(
- *   title="自动回复",
- *   description="公众号自动回复",
- *   schema="autoReply",
- *   required={"key","msgType","msgContent"}
- * )
- */
-class AutoReplyEntity implements JsonSerializable
+#[DataTable(name: 'wx_auto_reply', required: ["key", "msgType", "msgContent[JSON]"])]
+#[OA\Schema(title: "自动回复", description: "公众号自动回复", required: ["key", "msgType", "msgContent"])]
+class AutoReplyEntity
 {
-  use EntityTrait;
+  use EntityArrayTrait;
+
+  #[Column(type: Types::SMALLINT, autoIncrement: true, primary: true)]
+  #[OA\Property(description: "ID")]
+  private ?int $id;
+  #[Column(type: Types::STRING, length: 50, unique: true)]
+  #[OA\Property(description: "关键词")]
+  private string $key;
+
+  #[Column(type: Types::STRING, length: 10)]
+  #[OA\Property(description: "接收信息类型")]
+  private string $msgType;
+  #[Column(type: Types::STRING, length: 10)]
+  #[OA\Property(description: "回复类型")]
+  private string $replyType;
+  #[Column(type: Types::JSON)]
+  #[OA\Property(description: "回复内容", type: "array", items: new OA\Items())]
+  private array $msgContent;
 
   /**
-   * @DBType({"key":"PRI","type":"smallint(6) NOT NULL AUTO_INCREMENT"})
-   * @var integer|null
-   * @OA\Property(description="ID")
+   * @return array
    */
-  private ?int $id;
+  public function getMsgContent(): array
+  {
+    return $this->msgContent;
+  }
+
   /**
-   * @DBType({"key":"UNI","type":"varchar(200) NOT NULL DEFAULT ''"})
-   * @var string
-   * @OA\Property(description="关键词")
+   * @param array $msgContent
+   * @return AutoReplyEntity
    */
-  private string $key;
+  public function setMsgContent(array $msgContent): self
+  {
+    $this->msgContent = $msgContent;
+    return $this;
+  }
+
   /**
-   * @DBType({"type":"varchar(10) NOT NULL DEFAULT ''"})
-   * @var string
-   * @OA\Property(description="接收信息类型")
+   * @return string
    */
-  private string $msgType;
+  public function getReplyType(): string
+  {
+    return $this->replyType;
+  }
+
   /**
-   * @DBType({"type":"varchar(10) NOT NULL DEFAULT ''"})
-   * @var string
-   * @OA\Property(description="回复内容")
+   * @param string $replyType
+   * @return AutoReplyEntity
    */
-  private string $replyType;
+  public function setReplyType(string $replyType): self
+  {
+    $this->replyType = $replyType;
+    return $this;
+  }
+
   /**
-   * @DBType({"type":"varchar(5000) NOT NULL DEFAULT ''"})
-   * @var array
-   * @OA\Property(@OA\Items(),description="回复内容")
+   * @return string
    */
-  private array $msgContent;
+  public function getMsgType(): string
+  {
+    return $this->msgType;
+  }
+
+  /**
+   * @param string $msgType
+   * @return AutoReplyEntity
+   */
+  public function setMsgType(string $msgType): self
+  {
+    $this->msgType = $msgType;
+    return $this;
+  }
+
+  /**
+   * @return string
+   */
+  public function getKey(): string
+  {
+    return $this->key;
+  }
+
+  /**
+   * @param string $key
+   * @return AutoReplyEntity
+   */
+  public function setKey(string $key): self
+  {
+    $this->key = $key;
+    return $this;
+  }
+
+  /**
+   * @return int|null
+   */
+  public function getId(): ?int
+  {
+    return $this->id;
+  }
+
+  /**
+   * @param int|null $id
+   * @return AutoReplyEntity
+   */
+  public function setId(?int $id): self
+  {
+    $this->id = $id;
+    return $this;
+  }
+
+
 }

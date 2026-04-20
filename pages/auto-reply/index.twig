@@ -1,0 +1,26 @@
+<div data-page="wx.auto_reply" class="card"
+     hx-get="{{ url_for('wx.auto_reply') }}" hx-trigger="refresh-page from:body" hx-target="this" hx-swap="outerHTML">
+  <div class="card-header">
+    <h3 class="card-title">{{ title }}</h3>
+
+    <div class="card-tools">
+      <button type="button" class="btn btn-tool open-modal"
+              hx-get="{{ url_for('wx.auto_reply.add') }}"
+              hx-target="body"
+              hx-swap="beforeend"
+              hx-select="unset"
+              hx-disabled-elt="this"
+              data-modal-name="wx.auto_reply.modal"
+              data-modal-backdrop="static"
+              data-bs-toggle="tooltip" data-bs-title="添加自动回复">
+        <i class="fas fa-plus-circle"></i>添加
+      </button>
+    </div>
+  </div>
+  <div class="card-body">
+    <table id="auto-reply-table" data-action="{{ url_for('wx.auto_reply') }}"
+           class="table table-bordered table-hover"></table>
+  </div>
+  <!-- /.card-body -->
+</div>
+<!-- /.card -->

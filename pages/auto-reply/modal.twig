@@ -1,0 +1,201 @@
+{% extends "pages/common/modal.twig" %}
+
+{% block modal_body %}
+  <form hx-post="{{ action }}"
+        hx-swap="none"
+        class="needs-validation"
+        data-modal-form
+        data-reset
+        data-reload-datatable="auto-reply-table"
+        novalidate>
+    <div class="form-group row mb-3{{ reply ? ' d-none':'' }}">
+      <label for="msgType" class="col-sm-3 col-form-label text-right">接收信息类型</label>
+      <div class="col-sm-9">
+        <select id="msgType" name="msgType" class="form-select" required>
+          <option value="">请选择</option>
+          <optgroup label="接收事件">
+            <option value="click"{{ (reply.msgType == 'click') ? ' selected':'' }}
+                    data-action="{{ url_for('wx.customMenu.event',{event:'click'}) }}">点击菜单
+            </option>
+            <option value="view"{{ (reply.msgType == 'view') ? ' selected':'' }}
+                    data-action="{{ url_for('wx.customMenu.event',{event:'view'}) }}">点击菜单跳转URL
+            </option>
+            <option value="subscribe"{{ (menu.msgType == 'subscribe') ? ' selected':'' }}>粉丝关注</option>
+          </optgroup>
+          <optgroup label="接收消息">
+            <option value="text"{{ (reply.msgType == 'text') ? ' selected':'' }}>接收到文本</option>
+            <option value="image"{{ (reply.msgType == 'image') ? ' selected':'' }}>接收到图片</option>
+            <option value="voice"{{ (reply.msgType == 'voice') ? ' selected':'' }}>接收到语音</option>
+            <option value="video"{{ (reply.msgType == 'video') ? ' selected':'' }}>接收到视频</option>
+            <option value="shortvideo"{{ (reply.msgType == 'shortvideo') ? ' selected':'' }}>接收到小视频</option>
+            <option value="location"{{ (reply.msgType == 'location') ? ' selected':'' }}>接收到地理位置</option>
+            <option value="link"{{ (reply.msgType == 'link') ? ' selected':'' }}>接收到链接</option>
+          </optgroup>
+        </select>
+      </div>
+    </div>
+    <div class="form-group row mb-3{{ reply is empty or reply.msgType in ['text','click','view'] ? '':' d-none' }}"
+         id="keyword">
+      <label for="key" class="col-sm-3 col-form-label text-right">关键词</label>
+      <div class="col-sm-9">
+        <input id="key" name="key" value="{{ reply.key }}" type="text" class="form-control" required
+               placeholder="关键词" autocomplete="off">
+      </div>
+    </div>
+    <div id="message">
+      <div class="form-group row mb-3">
+        <label for="replyType" class="col-sm-3 col-form-label text-right">回复类型</label>
+        <div class="col-sm-9">
+          <select id="replyType" name="replyType"
+                  class="form-select required">
+            <option value="text"{{ (reply.replyType == 'text') ? ' selected':'' }}>文本消息</option>
+            <option value="image"{{ (reply.replyType == 'image') ? ' selected':'' }}
+                    data-select-material="{{ url_for('wx.material',{type:'image'}) }}">图片</option>
+            <option value="voice"{{ (reply.replyType == 'voice') ? ' selected':'' }}
+                    data-select-material="{{ url_for('wx.material',{type:'voice'}) }}">语音</option>
+            <option value="video"{{ (reply.replyType == 'video') ? ' selected':'' }}
+                    data-select-material="{{ url_for('wx.material',{type:'video'}) }}">视频</option>
+            <option value="music"{{ (reply.replyType == 'music') ? ' selected':'' }}>音乐</option>
+            <option value="news"{{ (reply.replyType == 'news') ? ' selected':'' }}>图文消息</option>
+          </select>
+        </div>
+      </div>
+      <div id="form-message" data-action="{{ url_for('app.file.upload') }}">
+        {% if reply is empty %}
+          <div class="form-group">
+            <label for="msgContent.Content">回复文本</label>
+            <textarea id="msgContent.Content" name="msgContent[Content]" class="form-control" required
+                      placeholder="回复文本,支持超链接"></textarea>
+          </div>
+        {% endif %}
+        {% if reply.msgContent.Content %}
+          <div class="form-group">
+            <label for="msgContent.Content">回复文本</label>
+            <textarea id="msgContent.Content" name="msgContent[Content]" class="form-control" required
+                      placeholder="回复文本,支持超链接">{{ reply.msgContent.Content }}</textarea>
+          </div>
+        {% endif %}
+        {% if reply.msgContent.Image %}
+          <div class="form-group">
+            <label>回复图片</label>
+            <div class="input-group">
+              <div class="input-group-append">
+                <div class="selMaterial" title="请选择素材">
+                  <img src="{{ url_for('wx.material.image',{media_id:reply.msgContent.Image.MediaId}) }}" alt="" class="w-100">
+                  <input name="msgContent[Image][MediaId]" value="{{ reply.msgContent.Image.MediaId }}" type="hidden">
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+        {% if reply.msgContent.Voice %}
+          <div class="form-group">
+            <label>回复语音</label>
+            <div class="input-group">
+              <div class="input-group-append">
+                <div class="selMaterial" title="请选择素材">
+                  <audio src="{{ url_for('wx.material.voice',{media_id:reply.msgContent.Voice.MediaId}) }}" controls
+                         class="pe-5"></audio>
+                  <input name="msgContent[Voice][MediaId]" required value="{{ reply.msgContent.Voice.MediaId }}"
+                         type="hidden">
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+        {% if reply.msgContent.Video %}
+          <div class="form-group">
+            <label>回复视频</label>
+            <div class="input-group">
+              <div class="input-group-append">
+                <div class="selMaterial" title="请选择素材">
+                  <img src="{{ reply.msgContent.Cover }}" class="object-fit-cover" style="width: 90px; height: 90px;" alt="">
+                  <input name="msgContent[Video][MediaId]" value="{{ reply.msgContent.Video.MediaId }}" type="hidden">
+                </div>
+              </div>
+              <div style="flex:1 1 auto">
+                <input name="msgContent[Video][Title]" class="form-control" placeholder="视频标题" required
+                       value="{{ reply.msgContent.Video.Title }}"
+                       style="height: 30px; border-bottom:0;border-radius: 0">
+                <textarea name="msgContent[Video][Description]" class="form-control" placeholder="视频描述" required
+                          style="height: 60px;border-radius: 0">{{ reply.msgContent.Video.Description }}</textarea>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+        {% if reply.msgContent.Music %}
+          <div class="form-group">
+            <label>回复音乐</label>
+            <div class="input-group">
+              <div class="input-group-append" style="margin-left: 0">
+                <div class="uploader_input_box selMusicCover"
+                     style="border-bottom: 0;border-right: 0; margin-bottom: 0">
+                  <img src="{{ url_for('wx.material.image',{media_id:reply.msgContent.Music.ThumbMediaId}) }}"
+                       class="object-fit-cover" style="width: 90px; height: 90px" alt="">
+                  <input name="msgContent[Music][ThumbMediaId]" value="{{ reply.msgContent.Music.ThumbMediaId }}"
+                         type="hidden">
+                </div>
+              </div>
+              <div style="flex:1 1 auto">
+                <input name="msgContent[Music][Title]" value="{{ reply.msgContent.Music.Title }}" class="form-control"
+                       placeholder="标题" required style="height: 30px;border-bottom:0;border-radius: 0">
+                <textarea name="msgContent[Music][Description]" class="form-control" placeholder="描述" required
+                          style="height: 60px;border-bottom: 0;border-radius: 0">{{ reply.msgContent.Music.Description }}</textarea>
+              </div>
+            </div>
+            <div class="input-group">
+              <input type="text" name="msgContent[Music][MusicUrl]" value="{{ reply.msgContent.Music.MusicUrl }}"
+                     required class="form-control" placeholder="音乐地址" style="border-radius: 0">
+              <div class="input-group-prepend" style="margin-right: 0">
+                <span class="input-group-text" id="uploadMusic">上传</span>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+        {% if reply.msgContent.Articles %}
+          <div class="form-group">
+            <label>回复图文</label>
+            {% for index, article in reply.msgContent.Articles %}
+              <div class="articleItem">
+                <input type="url" name="msgContent[Articles][{{ index }}][Url]" required
+                       class="form-control" placeholder="链接地址" value="{{ article.Url }}"
+                       style="border-radius: 0">
+                <div class="input-group">
+                  <div class="input-group-append" style="margin-left: 0">
+                    <div class="uploader_input_box" id="cropCover" style="border-top: 0;border-right: 0">
+                      <img src="{{ article.PicUrl }}" class="object-fit-cover" style="width: 90px;height: 90px" alt="">
+                    </div>
+                    <input type="hidden" name="msgContent[Articles][{{ index }}][PicUrl]" required
+                           value="{{ article.PicUrl }}">
+                  </div>
+                  <div style="flex:1 1 auto">
+                    <input name="msgContent[Articles][{{ index }}][Title]" value="{{ article.Title }}"
+                           class="form-control" placeholder="标题" required
+                           style="height: 30px; border-top: 0;border-bottom:0;border-radius: 0">
+                    <textarea name="msgContent[Articles][{{ index }}][Description]" class="form-control"
+                              placeholder="描述" required
+                              style="height: 60px;border-radius: 0">{{ article.Description }}</textarea>'
+                  </div>
+                  {% if index>0 %}
+                    <div class="input-group-append">
+                      <i class="fas fa-trash-alt input-group-text"
+                         style="height: 90px;border-radius: 0; border-top: 0"></i></div>
+                  {% endif %}
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+          {% if reply.msgType in ['click', 'view', 'subscribe'] and reply.msgContent.Articles|length < 8 %}
+            <div class="uploader_input_box" id="addArticle" style="height: 30px; width: 100%;">
+              <i class="fas fa-plus" style="margin-top: 7px"></i>
+            </div>
+          {% endif %}
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="d-grid gap-2 mt-3 col-6 mx-auto">
+      <button type="submit" class="btn btn-primary">提交</button>
+    </div>
+  </form>
+{% endblock %}

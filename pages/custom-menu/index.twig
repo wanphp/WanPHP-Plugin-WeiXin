@@ -1,0 +1,80 @@
+<div data-page="wx.custom_menu" class="row" hx-get="{{ url_for('wx.custom_menu',{tag_id:tag_id}) }}"
+     hx-trigger="refresh-page from:body" hx-target="this" hx-swap="outerHTML">
+  <div class="col-md-4">
+    <div class="card mb-3">
+      <div class="card-header">
+        <h3 class="card-title">粉丝标签为“{{ tagName }}”的菜单</h3>
+      </div>
+      <div id="tags" class="card-body">
+        <button class="btn btn-outline-info mr-2"
+                hx-get="{{ url_for('wx.custom_menu') }}" hx-target="#app-content" hx-push-url="true">默认
+        </button>
+        {% for tag in tags %}
+          <button class="btn btn-outline-info mr-2"
+                  hx-get="{{ url_for('wx.custom_menu', {id:tag.id}) }}" hx-target="#app-content" hx-push-url="true">
+            {{ tag.name }}</button>
+        {% endfor %}
+      </div>
+      <!-- /.card-body -->
+    </div>
+
+    <div class="card">
+      <div class="card-body mb-5 mt-5 pt-5 pb-5">
+
+      </div>
+      <!-- /.card-body -->
+      <div class="card-footer">
+        <div class="row">
+          {% for menu in menus %}
+            <div class="w-25 btn-group">
+              <div class="btn-group dropup">
+                <button class="btn btn-sm btn-outline-info"
+                        hx-get="{{ url_for('wx.custom_menu.edit',{id:menu.id}) }}" hx-target="#menu-form"
+                        hx-swap="innerHTML" data-bs-toggle="tooltip" data-bs-title="点击修改">
+                  {{ menu.name }}
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-info dropdown-toggle dropdown-toggle-split"
+                        data-bs-toggle="dropdown" aria-haspopup="true"
+                        aria-expanded="false">
+                </button>
+                <div class="dropdown-menu">
+                  {% for btn in menu.subBtn %}
+                    <button class="dropdown-item" hx-get="{{ url_for('wx.custom_menu.edit',{id:menu.id}) }}"
+                            hx-target="#menu-form" data-bs-toggle="tooltip" hx-swap="innerHTML"
+                            data-bs-title="点击修改">{{ btn.name }}</button>
+                    <div class="dropdown-divider"></div>
+                  {% endfor %}
+                  {% if menu.subBtn|length < 5 %}
+                    <button class="dropdown-item text-center"
+                            hx-get="{{ url_for('wx.custom_menu.add',{tag_id:tag_id,parent_id:menu.id}) }}"
+                            hx-target="#menu-form" hx-swap="innerHTML"
+                            data-bs-toggle="tooltip" data-bs-title="添加二级菜单">
+                      <i class="fa fa-plus"></i></button>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+          <div class="w-25 btn-group">
+            {% if menus|length < 3 %}
+              <button class="btn btn-link mr-2" hx-get="{{ url_for('wx.custom_menu.add',{tag_id:tag_id}) }}"
+                      hx-target="#menu-form" hx-swap="innerHTML"
+                      data-bs-toggle="tooltip" data-bs-title="添加一级菜单">
+                <i class="fa fa-plus"></i></button>
+            {% endif %}
+            <button id="createMenu" class="btn btn-link"
+                    hx-post="{{ url_for('wx.custom_menu.create', {tag_id: tag_id}) }}"
+                    hx-swap="none"
+                    hx-disabled-elt="this"
+                    hx-indicator="this"
+                    title="生成菜单">
+              <i class="fas fa-cloud-upload-alt normal"></i>
+              <i class="fas fa-spinner fa-spin loading d-none"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="menu-form" class="col-md-8" hx-target="this" hx-swap="innerHTML"></div>
+</div>

@@ -1,0 +1,32 @@
+<div data-page="wx.user.list" class="card"
+     hx-get="{{ url_for('wx.user.list') }}" hx-trigger="refresh-page from:body"
+     hx-target="this" hx-swap="outerHTML">
+  <div class="card-header">
+    <h3 class="card-title">{{title}}</h3>
+    <div class="card-tools">
+      <button id="setCookie" type="button" data-action="{{ url_for('wx.setCookie') }}"
+              class="btn btn-tool" data-bs-toggle="tooltip" data-bs-title="设置公众号Token、Cookie获取用户头像、呢称">
+        <i class="fas fa-key"></i>设置Cookie
+      </button>
+      {%  if issetCookie %}
+      <button id="syncFollowers" type="button" data-action="{{ url_for('wx.syncFollowers') }}"
+              class="btn btn-tool" data-bs-toggle="tooltip" data-bs-title="获取用户头像、呢称">
+        <i class="fas fa-sync"></i>
+      </button>
+      {%  endif %}
+    </div>
+  </div>
+  {% if tags %}
+  <div id="tags" class="card-header">
+    <button class="btn btn-outline-info mr-2" data-id="">默认</button>
+    {% for tag in tags %}
+    <button class="btn btn-outline-info mr-2" data-id="{{tag.id}}">{{tag.name}}</button>
+    {% endfor %}
+  </div>
+  {% endif %}
+  <div class="card-body">
+    <table id="user-list-table" data-action="{{ url_for('wx.user.list') }}" class="table table-sm table-bordered table-hover"></table>
+  </div>
+  <!-- /.card-body -->
+</div>
+<!-- /.card -->

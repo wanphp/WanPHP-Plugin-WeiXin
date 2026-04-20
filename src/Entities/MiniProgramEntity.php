@@ -6,40 +6,61 @@
  * Time: 10:40
  */
 
-namespace Wanphp\Plugins\Weixin\Entities;
+namespace WanPHP\Plugins\WeiXin\Entities;
 
 
-use JsonSerializable;
-use Wanphp\Libray\Mysql\EntityTrait;
+use Doctrine\DBAL\Types\Types;
+use OpenApi\Attributes as OA;
+use WanPHP\Core\Attribute\Column;
+use WanPHP\Core\Attribute\DataTable;
+use WanPHP\Core\Traits\EntityArrayTrait;
 
-/**
- * Class MiniProgramEntity
- * @package Wanphp\Plugins\Weixin\Entities
- * @OA\Schema(
- *   title="用户小程序关联信息",
- *   description="用户小程序关联信息",
- *   required={"openid","nickname","headimgurl","sex"}
- * )
- */
-class MiniProgramEntity implements JsonSerializable
+#[DataTable(name: 'wx_official_account', required: ["openid", "unionid"])]
+#[OA\Schema(title: "小程序关联", description: "用户小程序关联信息", required: ["openid", "unionid"])]
+class MiniProgramEntity
 {
-  use EntityTrait;
-  /**
-   * @DBType({"key":"PRI","type":"int NOT NULL"})
-   * @var integer|null
-   * @OA\Property(format="int64", description="用户ID")
-   */
-  private ?int $id;
-  /**
-   * @DBType({"key":"UNI","type":"varchar(29) NOT NULL DEFAULT ''"})
-   * @var string
-   * @OA\Property(description="微信openid")
-   */
+  use EntityArrayTrait;
+
+  #[Column(type: Types::STRING, length: 28, primary: true)]
+  #[OA\Property(description: "公众号用户openid", type: "string")]
   private string $openid;
+  #[Column(type: Types::STRING, length: 29, nullable: true, unique: true)]
+  #[OA\Property(description: "微信开放平台unionid", type: "string")]
+  private string $unionid;
+
   /**
-   * @DBType({"type":"int NOT NULL DEFAULT '0'"})
-   * @var integer
-   * @OA\Property(description="推荐用户ID")
+   * @return string
    */
-  private int $parent_id;
+  public function getOpenid(): string
+  {
+    return $this->openid;
+  }
+
+  /**
+   * @param string $openid
+   * @return MiniProgramEntity
+   */
+  public function setOpenid(string $openid): self
+  {
+    $this->openid = $openid;
+    return $this;
+  }
+
+  /**
+   * @return string
+   */
+  public function getUnionid(): string
+  {
+    return $this->unionid;
+  }
+
+  /**
+   * @param string $unionid
+   * @return MiniProgramEntity
+   */
+  public function setUnionid(string $unionid): self
+  {
+    $this->unionid = $unionid;
+    return $this;
+  }
 }
