@@ -35,7 +35,7 @@ class CurrentUser extends Action
     path: '/api/user/update',
     methods: ['POST'],
     description: '更新用户信息',
-    name: 'wx.user.update',
+    name: 'api.wx.user.update',
     middleware: [[ScopeMiddleware::class, 'user.write'], ResourceServerMiddleware::class]
   )]
   #[OA\Post(

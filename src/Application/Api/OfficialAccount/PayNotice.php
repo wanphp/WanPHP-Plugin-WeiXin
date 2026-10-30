@@ -23,7 +23,7 @@ abstract class PayNotice extends Action
   {
   }
 
-  #[Route(path: '/wx/pay/notice', methods: ['POST'], description: '支付结果通知回调', name: 'wx.pay.notice')]
+  #[Route(path: '/wx/pay/notice', methods: ['POST'], description: '支付结果通知回调', name: 'api.wx.pay.notice')]
   #[OA\Post(
     path: "/wx/pay/notice",
     summary: "微信支付结果通知回调",

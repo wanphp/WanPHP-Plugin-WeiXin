@@ -22,7 +22,7 @@ class SendTemplateMessage extends Action
     path: '/api/wx/user/sendMsg',
     methods: ['POST'],
     description: '发送模板消息',
-    name: 'wx.sendTemplateMessage',
+    name: 'api.wx.sendTemplateMessage',
     middleware: [[ScopeMiddleware::class, 'message.send'], ResourceServerMiddleware::class]
   )]
   #[OA\Post(

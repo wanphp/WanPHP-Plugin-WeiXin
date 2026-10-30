@@ -19,7 +19,7 @@ class ClientGetScope extends Action
     path: '/api/wx/client/scope/get',
     methods: ['POST'],
     description: 'openid取用户信息',
-    name: 'wx.client.scope.get',
+    name: 'api.wx.client.scope.get',
     middleware: [ResourceServerMiddleware::class]
   )]
   protected function action(): Response

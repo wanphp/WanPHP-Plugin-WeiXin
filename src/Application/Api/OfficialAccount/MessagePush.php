@@ -42,7 +42,7 @@ abstract class MessagePush extends Action
     $this->encryptionKey = Key::loadFromAsciiSafeString(getenv('APP_ENCRYPTION_KEY'));
   }
 
-  #[Route(path: '/wx/message/push', methods: ['GET', 'POST'], description: '微信服务地址', name: 'wx.message.push')]
+  #[Route(path: '/wx/message/push', methods: ['GET', 'POST'], description: '微信服务地址', name: 'api.wx.message.push')]
   #[OA\Post(
     path: "/wx/message/push",
     summary: "接收微信推送消息（事件/文本/图片等）",

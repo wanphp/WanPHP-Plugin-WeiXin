@@ -20,7 +20,7 @@ class ClientGetUser extends Action
     path: '/api/wx/client/user/get',
     methods: ['POST'],
     description: 'openid取用户信息',
-    name: 'wx.client.user.get',
+    name: 'api.wx.client.user.get',
     middleware: [[ScopeMiddleware::class, 'user.read'], ResourceServerMiddleware::class]
   )]
   #[OA\Post(

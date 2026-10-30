@@ -21,7 +21,7 @@ class UrlSign extends Action
   {
   }
 
-  #[Route(path: '/wx/getSignPackage', methods: ['POST'], description: '微信JS-SDK URL签名', name: 'wx.signPackage')]
+  #[Route(path: '/wx/getSignPackage', methods: ['POST'], description: '微信JS-SDK URL签名', name: 'api.wx.signPackage')]
   #[OA\Post(
     path: "/wx/getSignPackage",
     operationId: "signPackage",

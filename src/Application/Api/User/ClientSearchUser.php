@@ -21,7 +21,7 @@ class ClientSearchUser extends Action
     path: '/api/wx/client/user/search',
     methods: ['GET'],
     description: '搜索用户信息',
-    name: 'wx.client.user.search',
+    name: 'api.wx.client.user.search',
     middleware: [[ScopeMiddleware::class, 'user.read'], ResourceServerMiddleware::class]
   )]
   #[OA\Get(
